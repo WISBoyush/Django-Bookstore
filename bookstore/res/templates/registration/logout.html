@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Вы вышли из своего аккаунта</h1>
+    <p>Вы можете выполнить <a href="{% url 'login' %}">Вход</a> снова, либо перейти на <a
+            href="{% url 'main_page_url' %}">Главную страницу</a></p>
+{% endblock %}

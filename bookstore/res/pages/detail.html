@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+<!--{% load static %}-->
+<!--<!DOCTYPE html>-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+{% block content %}
+<div>
+{% if detail_item %}
+    <div class="body">
+        <div class="body__left-side">
+            <div class="body__title">
+                <h1>{{ detail_item.title }}</h1>
+            </div>
+            <div class="body__desc">
+                <h3>Описание</h3>
+                <p>
+                    {{ detail_item.description }}
+                </p>
+                {% if detail_item.author %}
+                    <h3>Автор</h3>
+                    <p>{{ detail_item.author }}</p>
+                    <h3>Дата выхода</h3>
+                    <p>{{ detail_item.date_of_release }}</p>
+                {% else %}
+                    <h3>Производитель</h3>
+                    <p>{{ detail_item.manufacturer }}</p>
+                {% endif %}
+                <h3>Цена</h3>
+                <p>{{ detail_item.price }}</p>
+            </div>
+        </div>
+        <div class="body__right-side">
+            <div class="picture">
+                <img src="../media/{{detail_item.image}}" alt="Что-то" class="body__content-list__element__image">
+            </div>
+            <div class="order_to">
+{#                <button type="button" class="order-to__btn">Оформить заказ</button>#}
+                <p class="price">${{ detail_item.price }}</p>
+                <form action="{% url "cart_add" detail_item.id %}" method="post">
+                    {% csrf_token %}
+                    {{ cart_product_form.as_p }}
+
+                    <input type="submit" value="Add to cart">
+                </form>
+                <form action="{% url "rent_add" detail_item.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Rent product">
+                </form>
+                {% if messages %}
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+
+    </div>
+{% endif %}
+
+</div>
+{% endblock content %}
+</body>
+</html>

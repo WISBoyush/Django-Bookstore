@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Заказа №{{ order_id }}</h2>
+    <h3>Список товаров:</h3>
+    {% for item in products %}
+        <p>Название: {{ item.item__title }}</p>
+        <br>
+
+    {% endfor %}
+    <h4>Товар взят на прокат c {{ rented_from }} по {{ rented_to }}</h4>
+
+    {% if state == 'AWAITING_DELIVERY' %}
+        <p>Ожидайте доставки</p>
+    {% endif %}
+
+{% endblock %}

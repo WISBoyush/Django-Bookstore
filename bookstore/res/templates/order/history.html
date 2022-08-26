@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1><a href="{% url "purchase_history" %}">Purchase history</a>   ||| <a href="{% url "rent_history" %}">Rent history</a></h1>
+
+    {% for order in order_history %}
+
+        <h2><a href="{% url 'payment' order.orders_id %}">Заказ № {{ order.orders_id }}</a></h2>
+
+        {% for element in order.purchase_order_list %}
+            <p>Название: {{ element.item__title }}</p>
+            <p>Цена за единицу: {{ element.item__price }}</p>
+            <p>Количество: {{ element.amount }}</p>
+        {% endfor %}
+        <p>Стоимость заказа: {{ order.total }}</p>
+        <p>Статус: {{ order.state }}</p>
+    {% endfor %}
+
+{% endblock %}

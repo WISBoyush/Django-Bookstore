@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Личная информация</h1>
+    <br>
+    <h3>Номер телефона</h3>
+    <p>{{ element.phone }}</p>
+    <h3>Электронная почта</h3>
+    <p>{{ element.user }}</p>
+    <h3>Информация о себе</h3>
+    <p>{{ element.bio }}</p>
+    <h3>Дата рождения</h3>
+    <p>{{ element.date_of_birth }}</p>
+    <h3>Баланс</h3>
+    <p>{{ element.balance }} (крышек)</p>
+
+    <a href="{% url 'profile_change' user.id %}">Изменение данных</a>
+
+
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <table class="cart">
+        <thead>
+        <tr>
+            <th>Title</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in ordered_objects %}
+            <tr>
+                <td><a href="{% url 'items_detail' item.item_id %}">{{ item.item__title }}</a></td>
+            </tr>
+        {% endfor %}
+        <tr>
+                <td>{{ rented_to }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Оформить заказ</button>
+    </form>
+
+{% endblock %}

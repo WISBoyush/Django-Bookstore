@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <table class="cart">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>New Price</th>
+            <th>Total Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order.products %}
+            <tr>
+                <td><a href="{% url 'items_detail' item.item_id %}">{{ item.item__title }}</a></td>
+                <td>{{ item.amount }}</td>
+                <td class="num">{{ item.item__price }} (крышек)</td>
+                <td>{{ item.new_price }}</td>
+                <td class="num">${{ item.price_discounted }} (крышек)</td>
+            </tr>
+        {% endfor %}
+        <tr class="total">
+            <td>Total</td>
+            <td class="num" colspan="4">{{ order.persons_discounted_price }} (крышек)</td>
+        </tr>
+        </tbody>
+    </table>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Оформить заказ</button>
+    </form>
+
+
+
+{% endblock %}

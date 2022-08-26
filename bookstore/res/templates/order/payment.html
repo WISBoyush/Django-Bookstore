@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Заказа №{{ order_id }}</h2>
+    <h3>Список товаров:</h3>
+    {% for item in products %}
+        <p>Название: {{ item.item__title }}</p>
+        <p>Цена за единицу: {{ item.item__price }}</p>
+        <p>Количество: {{ item.amount }}</p>
+        <br>
+
+    {% endfor %}
+    <h4>Стоимость заказа: {{ total }}</h4>
+
+    <form method="post">
+    {% csrf_token %}
+    {% if state == 'AWAITING_PAYMENT' %}
+        <button type="submit">Оплатить</button>
+    {% elif state == 'PAID' %}
+        <button type="submit" disabled>Оплатить</button>
+        <p>Вы уже оплатили заказ, ожидайте доставки</p>
+    {% elif state == 'AWAITING_ARRIVING' %}
+        <button type="submit" disabled>Оплатить</button>
+        <p>На данный момент на складе нет достаточного количества товара. Ожидайте поступления</p>
+    {% endif %}
+    </form>
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
