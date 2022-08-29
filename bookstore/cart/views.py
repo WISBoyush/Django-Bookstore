@@ -86,6 +86,7 @@ class OrderView(CreateView, ListView):
 
         user_pk = self.request.user.pk
 
+        # TODO Просто вернуть куэрисет
         self.queryset = Purchase.objects.get_total_products_information(user_pk=user_pk)
 
         return self.queryset
@@ -99,17 +100,23 @@ class OrderView(CreateView, ListView):
     @transaction.atomic
     def order_process(self, request, forms_data, total_order_price):
 
-        Purchase.objects.filter(user_id=self.request.user.pk, state='CART').prefetch_related(
-            'item__purchase_set').update(
+        Purchase.objects.filter(
+            user_id=self.request.user.pk,
+            state='CART'
+        ).prefetch_related('item__purchase_set').update(
             orders_time=datetime.datetime.now(),
             city=forms_data['city'],
             address=forms_data['address'],
             orders_id=uuid4(),
-            total_orders_price=total_order_price)
+            total_orders_price=total_order_price
+        )
 
-        orders_product = Purchase.objects.filter(user_id=self.request.user.pk, state='CART').select_related(
-            'item')
+        orders_product = Purchase.objects.filter(
+            user_id=self.request.user.pk,
+            state='CART'
+        ).select_related('item')
 
+        #TODO Переименовать чтобы было понятно
         amount_of_orders_product = orders_product.values('item_id', 'state',
                                                          'item__quantity', 'item'
                                                          ).annotate(amount=Count('item_id'))

@@ -7,6 +7,7 @@ from profiles.models import Profile
 
 class PurchaseManager(models.Manager):
 
+    # TODO Переименовать чтоб было понятно
     def get_items_amount(self):
         # Amount of items in shopping cart.
         products = self.filter(user_id=self.user_pk, state='CART').values(
