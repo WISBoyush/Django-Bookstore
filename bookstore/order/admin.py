@@ -1,11 +1,8 @@
 from django.contrib import admin
-from django.contrib.admin.options import InlineModelAdmin
 
 from cart.models import Purchase
 from rent.models import Rent
 
-
-# "id", "user_id", "item_id", "state", "orders_time", "orders_id"
 
 @admin.register(Purchase)
 class PurchaseAdmin(admin.ModelAdmin):
@@ -27,9 +24,6 @@ class PurchaseAdmin(admin.ModelAdmin):
         "state",
         "user_id"
     )
-
-
-# "id", "user_id", "item_id", "state", "orders_id", "rented_from", "rented_to"
 
 
 @admin.register(Rent)

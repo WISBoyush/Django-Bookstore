@@ -9,16 +9,17 @@ class PurchaseManager(models.Manager):
 
     def get_items_amount(self):
         # Amount of items in shopping cart.
-        products = self.filter(user_id=self.user_pk, state='CART').values('item_id',
-                                                                          'user_id',
-                                                                          'state',
-                                                                          'address',
-                                                                          'city',
-                                                                          'warranty_days',
-                                                                          'orders_time',
-                                                                          'item__price',
-                                                                          'item__title',
-                                                                          ).annotate(
+        products = self.filter(user_id=self.user_pk, state='CART').values(
+            'item_id',
+            'user_id',
+            'state',
+            'address',
+            'city',
+            'warranty_days',
+            'orders_time',
+            'item__price',
+            'item__title',
+        ).annotate(
             amount=Count('item_id'))
         return products
 

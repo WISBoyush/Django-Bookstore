@@ -62,10 +62,3 @@ class ProfileAdmin(admin.ModelAdmin):
     @admin.display(ordering='user__email')
     def user_email(self, obj):
         return obj.user.email
-
-# admin.site.register(Item)
-# admin.site.register(Book)
-# admin.site.register(Figure)
-# admin.site.register(Tag)
-# admin.site.register(User)
-# admin.site.register(Profile)

@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Count
 
 from cart.managers import PurchaseManager
 from goods.models import Service

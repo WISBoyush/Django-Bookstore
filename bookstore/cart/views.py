@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.db.models import F, Count
 from goods.models import Item
 from .models import Purchase
@@ -28,8 +28,6 @@ class AddPurchaseView(View):
 
         data_form = form.data
 
-        item = get_object_or_404(Item, id=item_id)
-
         for record in range(int(data_form['quantity'])):
             Purchase.objects.create(
                 warranty_days=14,
@@ -45,67 +43,6 @@ class CartPurchaseView(ListView):
     context_object_name = 'cart'
     template_name = 'cart/detail.html'
     model = Purchase
-
-    # def total_price_discounted(self):
-    #     products = Purchase.objects.total_items_price(self.user_pk)
-    #     for product in products:
-    #         product_discounted_price = Item.objects.filter(
-    #             id=product['item_id']).first().price_discounted
-    #         product['price_discounted'] = product['amount'] * product_discounted_price
-    #         product['new_price'] = product_discounted_price
-    #     #     product_list.append({
-    #     #         'price_discounted': product['amount'] *
-    #     #                           Item.objects.filter(id=product['item_id']).first().price_discount,
-    #     #         'item_id': product['item_id'],
-    #     #         'amount': product['amount']
-    #     #     })
-    #     # print(product_list)
-    #     print(products)
-    #     return products
-
-    # return Item.objects.price_with_discount().filter(purchase__user_id=self.user_pk).annotate(
-    #     amount=('id')).annotate(
-    #     total_price_for_unit=F('discounted_price_for_unit') * F('amount')
-    # )
-
-    #     amounts = Item.objects.filter(purchase__user_id=self.user_pk).annotate(amount=Count('id')).values('id',
-    #                                                                                                       'amount')
-    #     obj = []
-    #     for product in amounts:
-    #         obj.append(Item.objects.price_with_discount().filter(purchase__user_id=self.user_pk,
-    #                                                              id=product['id']).annotate(
-    #             total_price_for_unit=F('discounted_price_for_unit') * product['amount'],
-    #             amount=Value(product['amount'], output_field=models.IntegerField())))
-    #
-    #     return reduce(lambda i, j: i | j, obj)
-    #
-    # return Item.objects.all()
-
-    # def get_total_price_of_buy(self):
-    #     return sum([field['price_discounted'] for field in self.queryset])
-    #
-    # def get_persons_discounted_price(self):
-    #     return self.context['total'] - self.get_personal_discount() * self.context['total']
-    #
-    # def get_personal_discount(self):
-    #     return Profile.objects.filter(user_id=self.user_pk).first().person_disc * 0.01
-
-    # def get_queryset(self):
-    #     self.user_pk = self.request.user.pk
-    #     self.queryset = self.total_price_discounted()
-    #     # session_cotext = [[[item_key, item_value] for item_key, item_value in item.items()] for item in
-    #     #                   self.queryset.values()]
-    #     # self.request.session['shopping_cart'] = session_cotext
-    #     # P.s. Send context in session
-    #     return self.queryset
-    #
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     self.context = super().get_context_data()
-    #     self.context['total'] = self.get_total_price_of_buy()
-    #     self.context['persons_discounted_price'] = self.get_persons_discounted_price()
-    #     # session_cotext = self.context.loads()
-    #     # self.request.session['shopping_cart'] = session_cotext
-    #     return self.context
 
     def get_queryset(self):
         user_pk = self.request.user.pk
@@ -141,7 +78,6 @@ class DeleteItemPurchaseView(DeleteView):
 
 
 class OrderView(CreateView, ListView):
-
     form_class = OrderForm
     context_object_name = 'order'
     template_name = 'order/order.html'
@@ -189,7 +125,6 @@ class OrderView(CreateView, ListView):
         else:
 
             for product in amount_of_orders_product:
-
                 Item.objects.filter(id=product['item_id']
                                     ).update(
                     quantity=F('quantity') - product['amount']

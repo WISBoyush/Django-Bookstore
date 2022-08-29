@@ -1,8 +1,6 @@
 from django.db import models
 from datetime import date
 
-from django.db.models import Count
-
 from goods.models import Service
 from .managers import RentManager
 
@@ -39,4 +37,3 @@ class Rent(Service):
     )
 
     objects = RentManager()
-
