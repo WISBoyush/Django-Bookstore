@@ -86,10 +86,7 @@ class OrderView(CreateView, ListView):
 
         user_pk = self.request.user.pk
 
-        # TODO Просто вернуть куэрисет
-        self.queryset = Purchase.objects.get_total_products_information(user_pk=user_pk)
-
-        return self.queryset
+        return Purchase.objects.get_total_products_information(user_pk=user_pk)
 
     def get_context_data(self, **kwargs):
 
@@ -116,14 +113,13 @@ class OrderView(CreateView, ListView):
             state='CART'
         ).select_related('item')
 
-        #TODO Переименовать чтобы было понятно
-        amount_of_orders_product = orders_product.values('item_id', 'state',
-                                                         'item__quantity', 'item'
-                                                         ).annotate(amount=Count('item_id'))
+        products_of_order = orders_product.values('item_id', 'state',
+                                                  'item__quantity', 'item'
+                                                  ).annotate(amount=Count('item_id'))
 
-        if any(product['amount'] >= product['item__quantity'] for product in amount_of_orders_product):
+        if any(product['amount'] >= product['item__quantity'] for product in products_of_order):
 
-            amount_of_orders_product.update(state='AWAITING_ARRIVAL')
+            products_of_order.update(state='AWAITING_ARRIVAL')
 
             messages.success(request,
                              'The order was successfully created, but at the moment we do not have enough goods in '
@@ -131,13 +127,13 @@ class OrderView(CreateView, ListView):
                              )
         else:
 
-            for product in amount_of_orders_product:
+            for product in products_of_order:
                 Item.objects.filter(id=product['item_id']
                                     ).update(
                     quantity=F('quantity') - product['amount']
                 )
 
-            amount_of_orders_product.update(state='AWAITING_PAYMENT')
+            products_of_order.update(state='AWAITING_PAYMENT')
 
             messages.success(request, 'Order was successfully created')
 

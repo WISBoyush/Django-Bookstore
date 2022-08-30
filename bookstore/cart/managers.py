@@ -7,10 +7,9 @@ from profiles.models import Profile
 
 class PurchaseManager(models.Manager):
 
-    # TODO Переименовать чтоб было понятно
-    def get_items_amount(self):
+    def get_counted_products(self):
         # Amount of items in shopping cart.
-        products = self.filter(user_id=self.user_pk, state='CART').values(
+        return self.filter(user_id=self.user_pk, state='CART').values(
             'item_id',
             'user_id',
             'state',
@@ -22,10 +21,9 @@ class PurchaseManager(models.Manager):
             'item__title',
         ).annotate(
             amount=Count('item_id'))
-        return products
 
     def total_price_discounted(self):
-        products = self.get_items_amount()
+        products = self.get_counted_products()
 
         for product in products:
             product_discounted_price = Item.objects.filter(
@@ -39,7 +37,7 @@ class PurchaseManager(models.Manager):
     def get_total_price_of_buy(self):
         return sum([field['price_discounted'] for field in self.items_price])
 
-    def get_persons_discounted_price(self):
+    def get_personals_discounted_price(self):
         return self.total_products_inf['total'] - self.get_personal_discount() * self.total_products_inf['total']
 
     def get_personal_discount(self):
@@ -50,7 +48,7 @@ class PurchaseManager(models.Manager):
         self.items_price = self.total_price_discounted()
         self.total_products_inf = dict()
         self.total_products_inf['total'] = self.get_total_price_of_buy()
-        self.total_products_inf['persons_discounted_price'] = self.get_persons_discounted_price()
+        self.total_products_inf['persons_discounted_price'] = self.get_personals_discounted_price()
         self.total_products_inf['products'] = self.items_price
 
         return self.total_products_inf
