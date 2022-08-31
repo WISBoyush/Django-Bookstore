@@ -8,9 +8,11 @@ from .models import Profile
 class ProfileChangeView(UpdateView):
     model = Profile
     fields = [
+        'first_name',
+        'last_name',
         'bio',
         'date_of_birth',
-        'phone',
+        'phone'
     ]
     template_name = 'profile/profile-change.html'
 

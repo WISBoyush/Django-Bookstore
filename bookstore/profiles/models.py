@@ -13,6 +13,18 @@ class Profile(models.Model):
         on_delete=models.CASCADE
     )
 
+    first_name = models.CharField(
+        r"User's first name",
+        blank=True,
+        max_length=100
+    )
+
+    last_name = models.CharField(
+        r"User's last name",
+        blank=True,
+        max_length=100
+    )
+
     bio = models.TextField(
         blank=True,
         null=True,

@@ -10,6 +10,9 @@ class User(AbstractUser):
     email = models.EmailField(_("email address"), max_length=150, unique=True, blank=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+    first_name = None
+    last_name = None
+
 
     objects = UserManager()
 
