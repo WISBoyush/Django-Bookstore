@@ -1,17 +1,23 @@
 from django.contrib import admin
 from django.db.models import F
 
-from .models import (Item, Book, Figure, Tag, User, Profile)
-
-
-@admin.action(description='Mark increase discount to 5')
-def increase_discount(modeladmin, request, queryset):
-    queryset.update(discount=F('discount') + 5)
+from .models import (
+    Item,
+    Book,
+    Figure,
+    Tag,
+    User,
+    Profile
+)
 
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     list_display = ("id", "title", 'price', "display_tags", "quantity")
+
+    @admin.display(description='Tags')
+    def display_tags(self, obj):
+        return ', '.join([tag.tag_title for tag in obj.tags.all()])
 
 
 @admin.register(Book)

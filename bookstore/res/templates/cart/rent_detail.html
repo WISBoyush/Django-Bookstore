@@ -2,30 +2,35 @@
 
 {% block content %}
 
-     <h1><a href="{% url "cart_detail" %}">Your shopping cart</a>  ||| <a href="{% url "rent_detail" %}">Your rent cart</a></h1>
-    <table class="cart">
-        <thead>
-        <tr>
-            <th>Title</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in rented_objects %}
+    <h1><a href="{% url "cart_detail" %}">Your shopping cart</a> ||| <a href="{% url "rent_detail" %}">Your rent
+        cart</a></h1>
+    {% if not rented_objects %}
+        <p>В корзине нет товаров</p>
+    {% else %}
+        <table class="cart">
+            <thead>
             <tr>
-                <td><a href="{% url 'items_detail' item.item_id %}">{{ item.item__title }}</a></td>
-                <td>
-                    <form action="{% url 'rent_cart_remove' item.item_id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit"><i class="fa fa-trash trash" aria-hidden="true"></i></button>
-                    </form>
-                </td>
+                <th>Title</th>
             </tr>
-        {% endfor %}
-        <tr>
-            <td>{{ rented_to }}</td>
-        </tr>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for item in rented_objects %}
+                <tr>
+                    <td><a href="{% url 'items_detail' item.item_id %}">{{ item.item__title }}</a></td>
+                    <td>
+                        <form action="{% url 'rent_cart_remove' item.item_id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit"><i class="fa fa-trash trash" aria-hidden="true"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>{{ rented_to }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
     <p class="text-right">
         <a href="{% url "main_page_url" %}" class="button light">Continue shopping</a>
         <a href="{% url "rent_history" %}" class="button">Order story</a>

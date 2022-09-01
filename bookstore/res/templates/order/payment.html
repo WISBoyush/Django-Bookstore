@@ -14,15 +14,8 @@
 
     <form method="post">
     {% csrf_token %}
-    {% if state == 'AWAITING_PAYMENT' %}
-        <button type="submit">Оплатить</button>
-    {% elif state == 'PAID' %}
-        <button type="submit" disabled>Оплатить</button>
-        <p>Вы уже оплатили заказ, ожидайте доставки</p>
-    {% elif state == 'AWAITING_ARRIVING' %}
-        <button type="submit" disabled>Оплатить</button>
-        <p>На данный момент на складе нет достаточного количества товара. Ожидайте поступления</p>
-    {% endif %}
+        <button type="submit" {{ access }}>{{ button_message }}</button>
+
     </form>
     {% if messages %}
         {% for message in messages %}

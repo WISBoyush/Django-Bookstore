@@ -80,11 +80,17 @@ class OrderPaymentView(FormView):
         return Purchase.objects.get_counted_data(orders_id=id_order)
 
     def get_context_data(self, **kwargs):
-
         context = super().get_context_data()
-
         order_inf = Purchase.objects.filter(orders_id=self.kwargs.get('order_id')).first()
 
+        button_messages = {
+            'AWAITING_ARRIVAL': 'Заказ ещё не собран',
+            'AWAITING_PAYMENT': 'Оплатить',
+            'PAID': 'Заказ уже оплачен'
+        }
+
+        context['access'] = '' if order_inf.state == 'AWAITING_PAYMENT' else 'disabled'
+        context['button_message'] = button_messages[order_inf.state]
         context['products'] = self.get_queryset()
         context['total'] = order_inf.total_orders_price
         context['order_id'] = order_inf.orders_id

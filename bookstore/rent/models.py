@@ -1,11 +1,14 @@
-from django.db import models
 from datetime import date
+
+from django.db import models
 
 from goods.models import Service
 from .managers import RentManager
 
 
 class Rent(Service):
+    objects = RentManager()
+
     rented_from = models.DateField(
         "Rented from",
         auto_now=False,
@@ -35,5 +38,3 @@ class Rent(Service):
         blank=False,
         default='12345'
     )
-
-    objects = RentManager()

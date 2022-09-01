@@ -3,6 +3,7 @@ import logging
 from uuid import uuid4
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.db.models import F
 from django.shortcuts import redirect
@@ -82,19 +83,17 @@ class RentCartView(ListView):
         return context
 
 
-class MakeRentOrder(CreateView, ListView):
+class MakeRentOrder(LoginRequiredMixin, CreateView, ListView):
     context_object_name = 'ordered_objects'
     form_class = MakeRentOrderForm
     template_name = 'order/rent_order.html'
 
+
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return Rent.objects.filter(user_id=self.request.user.pk, state='CART').values(
-                'item__title',
-                'item_id'
-            )
-        else:
-            redirect('login')
+        return Rent.objects.filter(user_id=self.request.user.pk, state='CART').values(
+            'item__title',
+            'item_id'
+        )
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
@@ -130,7 +129,7 @@ class MakeRentOrder(CreateView, ListView):
 
         self.rent_order_process(ordered_products)
 
-        return redirect('rent_detail')
+        return redirect('rent_history')
 
 
 class RemoveRentOrdersItem(DeleteView):

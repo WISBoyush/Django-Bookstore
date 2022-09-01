@@ -163,4 +163,4 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
 CART_SESSION_ID = 'cart'
 
-
+LOGIN_URL = '/user/login'

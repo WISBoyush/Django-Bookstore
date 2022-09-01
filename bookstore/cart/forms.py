@@ -18,7 +18,6 @@ class CartDeleteItemForm(forms.Form):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Purchase
-
         fields = (
             'city',
             'address')

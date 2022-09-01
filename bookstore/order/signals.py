@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Count, F
+from django.db.models import Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -11,45 +11,43 @@ from order.tasks import order_created
 @transaction.atomic
 @receiver(post_save, sender=Item)
 def update(sender, instance, update_fields, **kwargs):
-
-    awaiting_user = Purchase.objects.filter(
+    order_awaiting_refill = Purchase.objects.filter(
         state='AWAITING_ARRIVAL'
     ).order_by(
         'orders_time'
-    ).values(
-        'orders_id',
-        'item_id'
-    )
+    ).first()
 
-    if awaiting_user.exists():
+    if order_awaiting_refill is not None:
 
-        awaiting_user = awaiting_user.first()
-
-        items_amount = Purchase.objects.filter(orders_id=awaiting_user['orders_id']).values(
+        items_amount = Purchase.objects.filter(orders_id=order_awaiting_refill.orders_id).values(
             'item_id'
         ).annotate(
             amount=(Count('item_id'))
-        )
+        ).order_by('item_id')
+
+        all_products = Item.objects.filter(id__in=[item['item_id'] for item in items_amount])
 
         if all(
-                [Item.objects.filter(
+                [all_products.get(
                     id=item['item_id']
-                ).values('quantity').first()['quantity']
+                ).quantity
                  >= item['amount']
                  for item in items_amount]
         ):
 
-            Purchase.objects.filter(orders_id=awaiting_user['orders_id']
+            Purchase.objects.filter(orders_id=order_awaiting_refill.orders_id
                                     ).update(
                 state='AWAITING_PAYMENT'
             )
 
-            for item in items_amount:
-
-                Item.objects.filter(id=item['item_id']).update(
-                    quantity=F('quantity') - item['amount']
-                )
+            # updated_products = list()
+            #
+            # for item in items_amount:
+            #     all_products.get(id=item['item_id']).quantity -= item['amount']
+            #     print(list(all_products.values()))
+            #
+            # Item.objects.bulk_update(all_products, ['quantity'])
 
             order_created.delay(
-                order_id=awaiting_user['orders_id']
+                order_id=order_awaiting_refill.orders_id
             )

@@ -13,7 +13,6 @@ from .forms import UserRegistrationForm, UserLogin
 
 
 class RegisterFormView(CreateView):
-
     template_name = 'registration/register.html'
     form_class = UserRegistrationForm
 
@@ -22,7 +21,6 @@ class RegisterFormView(CreateView):
 
 
 class UserLoginView(LoginView):
-
     template_name = 'registration/login.html'
     form_class = UserLogin
 

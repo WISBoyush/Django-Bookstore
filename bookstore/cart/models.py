@@ -5,6 +5,8 @@ from goods.models import Service
 
 
 class Purchase(Service):
+    objects = PurchaseManager()
+
     warranty_days = models.IntegerField(
         "Dates of warranty",
         default=30
@@ -27,8 +29,6 @@ class Purchase(Service):
         max_length=250,
         default='12345'
     )
-
-    objects = PurchaseManager()
 
     total_orders_price = models.IntegerField(
         "Total price of order",

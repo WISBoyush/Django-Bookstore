@@ -2,38 +2,42 @@
 
 {% block content %}
 
-    <table class="cart">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>New Price</th>
-            <th>Total Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in order.products %}
+    {% if not ordered_objects %}
+        <h1>Здесь нет товаров, чтобы оформить заказ, необходимо что-то заказать <a href="{% url 'main_page_url' %}">здесь</a>
+        </h1>
+    {% else %}
+        <table class="cart">
+            <thead>
             <tr>
-                <td><a href="{% url 'items_detail' item.item_id %}">{{ item.item__title }}</a></td>
-                <td>{{ item.amount }}</td>
-                <td class="num">{{ item.item__price }} (крышек)</td>
-                <td>{{ item.new_price }}</td>
-                <td class="num">${{ item.price_discounted }} (крышек)</td>
+                <th>Title</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>New Price</th>
+                <th>Total Price</th>
             </tr>
-        {% endfor %}
-        <tr class="total">
-            <td>Total</td>
-            <td class="num" colspan="4">{{ order.persons_discounted_price }} (крышек)</td>
-        </tr>
-        </tbody>
-    </table>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Оформить заказ</button>
-    </form>
-
+            </thead>
+            <tbody>
+            {% for item in order.products %}
+                <tr>
+                    <td><a href="{% url 'items_detail' item.item_id %}">{{ item.item__title }}</a></td>
+                    <td>{{ item.amount }}</td>
+                    <td class="num">{{ item.item__price }} (крышек)</td>
+                    <td>{{ item.new_price }}</td>
+                    <td class="num">${{ item.price_discounted }} (крышек)</td>
+                </tr>
+            {% endfor %}
+            <tr class="total">
+                <td>Total</td>
+                <td class="num" colspan="4">{{ order.persons_discounted_price }} (крышек)</td>
+            </tr>
+            </tbody>
+        </table>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Оформить заказ</button>
+        </form>
+    {% endif %}
 
 
 {% endblock %}

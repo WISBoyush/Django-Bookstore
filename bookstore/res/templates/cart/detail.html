@@ -1,40 +1,50 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <h1><a href="{% url "cart_detail" %}">Your shopping cart</a>  ||| <a href="{% url "rent_detail" %}">Your rent cart</a></h1>
-    <table class="cart">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>New Price</th>
-            <th>Total Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in cart.products %}
+    <h1><a href="{% url "cart_detail" %}">Your shopping cart</a> ||| <a href="{% url "rent_detail" %}">Your rent
+        cart</a></h1>
+    {% if not cart.products %}
+        <p>Корзина пустая</p>
+    {% else %}
+        <table class="cart">
+            <thead>
             <tr>
-                <td><a href="{% url 'items_detail' item.item_id %}">{{ item.item__title }}</a></td>
-                <td>{{ item.amount }}</td>
-                <td class="num">{{ item.item__price }} (крышек)</td>
-                <td>{{ item.new_price }}</td>
-                <td class="num">${{ item.price_discounted }} (крышек)</td>
-                <td>
-                    <form action="{% url 'cart_remove' item.item_id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit"><i class="fa fa-trash trash" aria-hidden="true"></i></button>
-                    </form>
-                </td>
+                <th>Title</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>New Price</th>
+                <th>Total Price</th>
             </tr>
-        {% endfor %}
-        <tr class="total">
-            <td>Total</td>
-            <td class="num" colspan="4"><span class="line-through">{{ cart.total }}</span>  {{ cart.persons_discounted_price }}(крышек)
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for item in cart.products %}
+                <tr>
+                    <td><a href="{% url 'items_detail' item.item_id %}">{{ item.item__title }}</a></td>
+                    <td>{{ item.amount }}</td>
+                    <td class="num">{{ item.item__price }} (крышек)</td>
+                    <td>{{ item.new_price }}</td>
+                    <td class="num">${{ item.price_discounted }} (крышек)</td>
+                    <td>
+                        <form action="{% url 'cart_remove' item.item_id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit"><i class="fa fa-trash trash" aria-hidden="true"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr class="total">
+                <td>Total</td>
+                {% if cart.total == cart.persons_discounted_price %}
+                    <td class="num" colspan="4">{{ cart.total }} (крышек) </td>
+                {% else %}
+                    <td class="num" colspan="4">
+                        <span class="line-through">{{ cart.total }}</span> {{ cart.persons_discounted_price }}(крышек)
+                    </td>
+                {% endif %}
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
     <p class="text-right">
         <a href="{% url "main_page_url" %}" class="button light">Continue shopping</a>
         <a href="{% url "purchase_history" %}" class="button">Order story</a>

@@ -56,11 +56,6 @@ class Item(models.Model):
         on_delete=models.CASCADE
     )
 
-    def display_tags(self):
-        return ', '.join([tag.tag_title for tag in self.tags.all()])
-
-    display_tags.short_description = 'Tags'
-
     def __str__(self):
         return str(self.title)
 
