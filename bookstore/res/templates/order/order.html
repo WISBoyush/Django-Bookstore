@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    {% if not ordered_objects %}
+    {% if not order %}
         <h1>Здесь нет товаров, чтобы оформить заказ, необходимо что-то заказать <a href="{% url 'main_page_url' %}">здесь</a>
         </h1>
     {% else %}

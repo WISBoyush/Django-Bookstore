@@ -25,9 +25,7 @@ class ProfileData(ListView):
     context_object_name = 'element'
 
     def get_queryset(self):
-
         user = self.request.user.pk
-
         current_item = Profile.objects.filter(
             user_id=user
         ).first()
@@ -35,7 +33,5 @@ class ProfileData(ListView):
         return current_item
 
     def get_context_data(self, *, object_list=None, **kwargs):
-
         context = super().get_context_data()
-
         return context

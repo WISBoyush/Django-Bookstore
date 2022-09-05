@@ -3,11 +3,10 @@ from uuid import uuid4
 
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import F, Count
+from django.db.models import Count
 from django.shortcuts import redirect
 from django.views.generic import *
 
-from goods.models import Item
 from .forms import CartAddProductForm, OrderForm
 from .models import Purchase
 
@@ -101,30 +100,23 @@ class OrderView(CreateView, ListView):
             state='CART'
         ).select_related('item')
 
-        products_of_order = orders_product.values('item_id', 'state',
-                                                  'item__quantity', 'item'
-                                                  ).annotate(amount=Count('item_id'))
+        counted_orders_product = orders_product.values('item_id', 'state',
+                                                       'item__quantity', 'item'
+                                                       ).annotate(amount=Count('item_id'))
 
-        if any(product['amount'] >= product['item__quantity'] for product in products_of_order):
+        if any(product['amount'] >= product['item__quantity'] for product in counted_orders_product):
 
-            products_of_order.update(state='AWAITING_ARRIVAL')
+            counted_orders_product.update(state='AWAITING_ARRIVAL')
             messages.success(request,
                              'The order was successfully created, but at the moment we do not have enough goods in '
-                             'stock, the delivery will be slightly delayed'
-                             )
+                             'stock, the delivery will be slightly delayed')
         else:
-
-            for product in products_of_order:
-                Item.objects.filter(id=product['item_id']
-                                    ).update(
-                    quantity=F('quantity') - product['amount']
-                )
-
-            products_of_order.update(state='AWAITING_PAYMENT')
+            counted_orders_product.update(state='AWAITING_PAYMENT')
 
     def post(self, request, *args, **kwargs):
-        total_order_price = Purchase.objects.get_total_products_information(user_pk=self.request.user.pk)[
-            'persons_discounted_price']
+        total_order_price = Purchase.objects.get_total_products_information(
+            user_pk=self.request.user.pk
+        )['persons_discounted_price']
         forms_data = self.get_form().data
         self.order_process(request, forms_data, total_order_price)
 

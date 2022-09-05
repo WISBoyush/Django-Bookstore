@@ -1,10 +1,7 @@
-from django.shortcuts import render, get_object_or_404
-
-from django.views.generic.detail import DetailView
-
 from django.contrib.contenttypes.models import ContentType
-
 from django.db.models import Q
+from django.shortcuts import render, get_object_or_404
+from django.views.generic.detail import DetailView
 
 from cart.forms import CartAddProductForm
 from .models import (Item,
