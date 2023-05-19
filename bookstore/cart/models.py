@@ -35,3 +35,9 @@ class Purchase(Service):
         null=True,
         blank=True
     )
+
+    fk_self = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True
+    )

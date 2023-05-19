@@ -1,5 +1,9 @@
 from django.contrib import admin
-from django.db.models import F
+from django.contrib.admin import site
+from django.contrib.admin.views.main import *
+from django.contrib.admin.widgets import AutocompleteSelectMultiple
+from django.contrib.contenttypes.models import ContentType
+from django.core.checks import Tags
 
 from .models import (
     Item,
@@ -11,6 +15,40 @@ from .models import (
 )
 
 
+class ItemDetailModelAdmin(admin.ModelAdmin):
+    fieldsets = None
+    autocomplete_fields = ('tags', )
+
+    def set_form_params(self, form, content_type):
+        form.base_fields['content_type'].initial = content_type
+        form.base_fields['content_type'].disabled = True
+        form.base_fields['content_type'].widget.can_add_related = False
+        form.base_fields['content_type'].widget.can_change_related = False
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super(ItemDetailModelAdmin, self).get_form(request, obj, change, **kwargs)
+        if hasattr(obj, 'content_type_id'):
+            content_type = obj.content_type_id
+        else:
+            content_type = ContentType.objects.get(model=self.__class__.model.__name__.lower()).id
+        self.set_form_params(form, content_type)
+        return form
+
+    # def formfield_for_manytomany(self, db_field, request, **kwargs):
+    #     form_field = super().formfield_for_manytomany(db_field, request, **kwargs)
+    #     if form_field:
+    #         db = kwargs.get('using')
+    #         if db_field.name == 'tags':
+    #             form_field.widget = AutocompleteSelectMultiple(Tag._meta.get_field('tag_title'), site)
+    #         if 'queryset' not in kwargs:
+    #             queryset = self.get_field_queryset(db_field=db_field, request=request, db=db)
+    #             print(queryset)
+    #             if queryset is not None:
+    #                 kwargs['queryset'] = queryset
+    #         return form_field
+    #     return form_field
+
+
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     list_display = ("id", "title", 'price', "display_tags", "quantity")
@@ -19,14 +57,22 @@ class ItemAdmin(admin.ModelAdmin):
     def display_tags(self, obj):
         return ', '.join([tag.tag_title for tag in obj.tags.all()])
 
+    #
+    # def get_form(self, request, obj=None, change=False, **kwargs):
+    #     super().get_form(request, obj, change, **kwargs)
+    # ct = obj.content_type.through.objects.filter(pk=obj.pk).values('content_type_id', 'model').first()
+    # print(ct)
+
 
 @admin.register(Book)
-class BookAdmin(admin.ModelAdmin):
+class BookAdminDetail(ItemDetailModelAdmin):
+    model = Book
     list_display = ("id", "title", "quantity", "author")
 
 
 @admin.register(Figure)
-class FigureAdmin(admin.ModelAdmin):
+class FigureAdminDetail(ItemDetailModelAdmin):
+    model = Figure
     list_display = ("id", "title", "quantity", "manufacturer")
 
 
@@ -44,6 +90,16 @@ def decrease_discount(modeladmin, request, queryset):
 class TagAdmin(admin.ModelAdmin):
     list_display = ('tag_title', 'discount')
     actions = [increase_discount, decrease_discount]
+    search_fields = ('tag_title', )
+    ordering = ('pk', )
+
+    def save_model(self, request, obj, form, change):
+        if request.user.email == 'test@test.test':
+            raise PermissionError('Нельзя!!!')
+
+    def delete_model(self, request, obj):
+        if request.user.email == 'test@test.test':
+            raise PermissionError('Нельзя !!!')
 
 
 # _____user_____
