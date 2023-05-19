@@ -1,23 +1,26 @@
+from datetime import date
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from datetime import date
-
 from django.utils.translation import gettext_lazy as _
-from users.models import User
+
 from profiles.models import Profile
+from users.models import User
 
 
 class Tag(models.Model):
     tag_title = models.CharField(
-        max_length=50
+        max_length=50,
+        verbose_name=_("Tag's title")
     )
 
     tag_description = models.CharField(
-        max_length=100
+        max_length=100,
+        verbose_name=_("Tag's description")
     )
 
     discount = models.IntegerField(
-        default=0
+        default=0,
+        verbose_name=_('Discount')
     )
 
     def __str__(self):
@@ -26,24 +29,29 @@ class Tag(models.Model):
 
 class Item(models.Model):
     quantity = models.IntegerField(
-        default=0
+        default=0,
+        verbose_name=_('Quantity')
     )
 
     title = models.CharField(
-        max_length=50
+        max_length=50,
+        verbose_name=_('Title')
     )
 
     description = models.TextField(
-        max_length=1000
+        max_length=1000,
+        verbose_name=_('Description')
     )
 
     price = models.IntegerField(
-        default=200
+        default=200,
+        verbose_name=_('Price')
     )
 
     image = models.ImageField(
         null=True,
-        upload_to=''
+        upload_to='',
+        verbose_name=_('Image')
     )
 
     tags = models.ManyToManyField(
@@ -53,7 +61,8 @@ class Item(models.Model):
 
     content_type = models.ForeignKey(
         ContentType,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name=_('Content type')
     )
 
     def __str__(self):
@@ -80,27 +89,30 @@ class Service(models.Model):
         User,
         on_delete=models.CASCADE,
         blank=True,
-        default=1
+        default=1,
+        verbose_name=_('User')
     )
 
     item = models.ForeignKey(
         Item,
         on_delete=models.CASCADE,
         blank=True,
-        default=1
+        default=1,
+        verbose_name=_('Item')
     )
 
     state = models.CharField(
         max_length=50,
         choices=State.choices,
-        default='CART'
+        default='CART',
+        verbose_name=_('State')
     )
 
     orders_id = models.CharField(
-        "ID of order",
         max_length=250,
         null=True,
-        blank=True
+        blank=True,
+        verbose_name=_("Order's id")
     )
 
     class Meta:
@@ -109,14 +121,15 @@ class Service(models.Model):
 
 class Book(Item):
     author = models.CharField(
-        max_length=100
+        max_length=100,
+        verbose_name=_('Author')
     )
 
     date_of_release = models.DateField(
-        "Date of release",
         auto_now=False,
         auto_now_add=False,
-        default=date.today
+        default=date.today,
+        verbose_name=_('Date of release')
     )
 
     type = 1
@@ -124,7 +137,8 @@ class Book(Item):
 
 class Figure(Item):
     manufacturer = models.CharField(
-        max_length=50
+        max_length=50,
+        verbose_name=_('Manufacturer')
     )
 
     type = 2

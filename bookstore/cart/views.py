@@ -46,9 +46,9 @@ class CartPurchaseView(ListView):
         self.queryset = Purchase.objects.get_total_products_information(user_pk=user_pk)
         return self.queryset
 
-    def get_context_data(self, **kwargs):
-        self.context = super().get_context_data()
-        return self.context
+    # def get_context_data(self, **kwargs):
+    #     self.context = super().get_context_data()
+    #     return self.context
 
 
 class DeleteItemPurchaseView(DeleteView):
